@@ -1,52 +1,35 @@
 #include "binary_trees.h"
-/**
- * find_node -function that finds node in a tree
- * @root: root of the tree to be evaluated
- * @node: node to find
- * Return: 1 if exits 0 if no
- */
-int find_node(binary_tree_t *root, binary_tree_t *node)
-{
+#include "limits.h"
 
-	if (root == NULL)
-		return (0);
-	if (node == root)
-		return (1);
-	if (node->n < root->n)
-		return (find_node(root->left, node));
-	if (node->n > root->n)
-		return (find_node(root->right, node));
-	return (0);
-}
 /**
- * croos_tree - cross the tree checking if each node exist correctly
- * @root: root node of the tree
- * @node: current node to evaluate
- * Return: 1 if is BST0 if no
+ * is_bst_helper - Checks if a binary tree is a valid binary search tree.
+ * @tree: A pointer to the root node of the tree to check.
+ * @lo: The value of the smallest node visited thus far.
+ * @hi: The value of the largest node visited this far.
+ *
+ * Return: If the tree is a valid BST, 1, otherwise, 0.
  */
-int croos_tree(binary_tree_t *root, binary_tree_t *node)
+int is_bst_helper(const binary_tree_t *tree, int lo, int hi)
 {
-	if (root && node)
+	if (tree != NULL)
 	{
-		int aux = 0;
-
-		aux = find_node(root, node);
-		if (node->left)
-			aux &= croos_tree(root, node->left);
-		if (node->right)
-			aux &= croos_tree(root, node->right);
-		return (aux);
+		if (tree->n < lo || tree->n > hi)
+			return (0);
+		return (is_bst_helper(tree->left, lo, tree->n - 1) &&
+			is_bst_helper(tree->right, tree->n + 1, hi));
 	}
-	return (0);
+	return (1);
 }
+
 /**
- * binary_tree_is_bst - check if ist a correctly bst tree
- * @tree: tre to check
- * Return: 1 if is bst 0 if not
+ * binary_tree_is_bst - Checks if a binary tree is a valid binary search tree.
+ * @tree: A pointer to the root node of the tree to check.
+ *
+ * Return: 1 if tree is a valid BST, and 0 otherwise
  */
 int binary_tree_is_bst(const binary_tree_t *tree)
 {
 	if (tree == NULL)
 		return (0);
-	return (croos_tree((binary_tree_t *)tree, (binary_tree_t *)tree));
+	return (is_bst_helper(tree, INT_MIN, INT_MAX));
 }
